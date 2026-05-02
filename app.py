@@ -11,7 +11,7 @@ try:
     from predict import predict_sentiment 
     # Agar Hassan ne NER ka function bhi banaya hai toh yahan add karein
 except ImportError:
-    st.error("Error: 'src/predict.py' nahi mili ya us mein function missing hai.")
+    st.error("Error: 'src/predict.py' not found or function missing.")
 
 # --- Page Configuration ---
 st.set_page_config(page_title="Medical NLP Analyzer", page_icon="💊", layout="wide")
@@ -30,11 +30,15 @@ with st.sidebar:
 
 # --- Main UI ---
 st.title("💊 Medical NLP Analyzer")
-st.markdown("Patient reviews ka analysis karein aur insights hasil karein.")
+st.markdown("Analyze patient reviews and extract meaningful medical insights instantly.")
 
 # Input Section
 st.subheader("Enter Patient Review")
-user_input = st.text_area("Yahan review paste karein (e.g., 'The medication was effective but had some side effects...')", height=150)
+user_input = st.text_area(
+    "Patient Feedback", 
+    placeholder="e.g., 'The medication was effective but I experienced some nausea...'", 
+    height=150
+)
 
 # Analysis Logic
 if st.button("Run Analysis"):
@@ -43,27 +47,30 @@ if st.button("Run Analysis"):
         
         with st.spinner('Analyzing text...'):
             # 1. Sentiment Analysis
-            sentiment_result = predict_sentiment(user_input)
-            
-            with col1:
-                st.markdown("### 📊 Sentiment Result")
-                if "positive" in sentiment_result.lower():
-                    st.success(f"Result: {sentiment_result}")
-                elif "negative" in sentiment_result.lower():
-                    st.error(f"Result: {sentiment_result}")
-                else:
-                    st.warning(f"Result: {sentiment_result}")
+            try:
+                sentiment_result = predict_sentiment(user_input)
+                
+                with col1:
+                    st.markdown("### 📊 Sentiment Result")
+                    if "positive" in sentiment_result.lower():
+                        st.success(f"Result: {sentiment_result}")
+                    elif "negative" in sentiment_result.lower():
+                        st.error(f"Result: {sentiment_result}")
+                    else:
+                        st.warning(f"Result: {sentiment_result}")
+            except Exception as e:
+                st.error(f"Sentiment Analysis Error: {e}")
 
             with col2:
                 st.markdown("### 🔍 Extracted Entities")
-                # Yahan hum dummy entities dikha rahe hain jab tak Hassan ka NER function connect na ho
+                # NER Model display
                 st.info("NER Model processing drugs and conditions...")
-                # st.write(extract_entities(user_input)) # Uncomment karein agar function hai
+                # st.write(extract_entities(user_input)) # Uncomment karein agar function available ho
                 
         st.divider()
         st.balloons()
     else:
-        st.warning("Pehle kuch text toh likhein!")
+        st.warning("Please enter some text to analyze!")
 
 # --- Footer ---
 st.markdown("<br><hr><center>Developed with ❤️ by Rabia & Hassan</center>", unsafe_allow_html=True)
