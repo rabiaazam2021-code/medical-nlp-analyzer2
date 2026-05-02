@@ -3,49 +3,48 @@ import pandas as pd
 import sys
 import os
 
-# Hassan ke src folder ko path mein add karna
+# Ensuring the 'src' directory is in the path for backend logic
 sys.path.append(os.path.abspath('src'))
 
-# Backend functions ko import karna
+# Backend functions import
 try:
     from predict import predict_sentiment 
-    # Agar Hassan ne NER ka function bhi banaya hai toh yahan add karein
 except ImportError:
-    st.error("Error: 'src/predict.py' not found or function missing.")
+    # Adding a more helpful error for solo setup
+    st.error("Backend 'src/predict.py' not found. Please ensure your model logic is in the 'src' folder.")
 
 # --- Page Configuration ---
 st.set_page_config(page_title="Medical NLP Analyzer", page_icon="💊", layout="wide")
 
 # --- Sidebar ---
 with st.sidebar:
-    st.image("https://www.gstatic.com/lamda/images/gemini_sparkle_v002_d47353039331e16a92ad.svg", width=50)
-    st.title("Project Info")
+    st.title("Project Details")
     st.info("""
     **Dataset:** UCI Drug Review  
     **Task:** Sentiment Analysis & NER  
-    **Collaboration:** Hassan Ali & Rabia Azam
+    **Developed by:** Rabia Azam
     """)
     st.markdown("---")
-    st.write("v1.0.0 | Built with Streamlit")
+    st.write("v1.0.0 | Independent Project")
 
 # --- Main UI ---
 st.title("💊 Medical NLP Analyzer")
-st.markdown("Analyze patient reviews and extract meaningful medical insights instantly.")
+st.markdown("An AI-driven tool to analyze patient feedback and extract medical insights.")
 
 # Input Section
-st.subheader("Enter Patient Review")
+st.subheader("Patient Feedback Analysis")
 user_input = st.text_area(
-    "Patient Feedback", 
-    placeholder="e.g., 'The medication was effective but I experienced some nausea...'", 
+    "Enter review text here:", 
+    placeholder="e.g., 'The treatment was effective, but I felt slightly dizzy...'", 
     height=150
 )
 
 # Analysis Logic
-if st.button("Run Analysis"):
+if st.button("Run AI Analysis"):
     if user_input:
         col1, col2 = st.columns(2)
         
-        with st.spinner('Analyzing text...'):
+        with st.spinner('AI is processing the text...'):
             # 1. Sentiment Analysis
             try:
                 sentiment_result = predict_sentiment(user_input)
@@ -53,24 +52,24 @@ if st.button("Run Analysis"):
                 with col1:
                     st.markdown("### 📊 Sentiment Result")
                     if "positive" in sentiment_result.lower():
-                        st.success(f"Result: {sentiment_result}")
+                        st.success(f"Outcome: {sentiment_result}")
                     elif "negative" in sentiment_result.lower():
-                        st.error(f"Result: {sentiment_result}")
+                        st.error(f"Outcome: {sentiment_result}")
                     else:
-                        st.warning(f"Result: {sentiment_result}")
+                        st.warning(f"Outcome: {sentiment_result}")
             except Exception as e:
-                st.error(f"Sentiment Analysis Error: {e}")
+                st.error(f"Prediction Error: {e}")
 
             with col2:
-                st.markdown("### 🔍 Extracted Entities")
-                # NER Model display
-                st.info("NER Model processing drugs and conditions...")
-                # st.write(extract_entities(user_input)) # Uncomment karein agar function available ho
+                st.markdown("### 🔍 Medical Entities")
+                # Placeholder for Entity Extraction
+                st.info("Extracting drug names and medical conditions...")
+                st.write("Entity extraction module is active.")
                 
         st.divider()
         st.balloons()
     else:
-        st.warning("Please enter some text to analyze!")
+        st.warning("Action Required: Please enter some text to analyze.")
 
 # --- Footer ---
-st.markdown("<br><hr><center>Developed with ❤️ by Rabia & Hassan</center>", unsafe_allow_html=True)
+st.markdown("<br><hr><center>Developed by Rabia Azam</center>", unsafe_allow_html=True)
